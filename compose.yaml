@@ -1,0 +1,40 @@
+services:
+  app:
+    build:
+      dockerfile: ./docker/app/Dockerfile
+    ports:
+      - "9000:9000"
+      - "8080:80"
+    volumes:
+      - .:/app/
+    restart: unless-stopped
+  server:
+    build:
+      context: ./docker/nginx
+      dockerfile: ./Dockerfile
+    ports:
+      - "80:80"
+    volumes:
+      - .:/app/
+    restart: unless-stopped
+  db:
+    build:
+      dockerfile: docker/database/Dockerfile
+    restart: unless-stopped
+    environment:
+
+      # example values
+      # edit in override
+      MYSQL_DATABASE: db
+      MYSQL_USER: user
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_PASSWORD: user1
+
+    ports:
+      - "3306:3306"
+    volumes:
+      - \db\mariadata
+
+volumes:
+  dbvol:
+

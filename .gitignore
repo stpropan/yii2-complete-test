@@ -1,0 +1,9 @@
+# visual studio code project files
+.vscode
+
+# composer vendor dir
+/vendor
+
+# NPM packages
+/node_modules
+.env
