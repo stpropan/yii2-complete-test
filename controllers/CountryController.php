@@ -2,11 +2,15 @@
 
 namespace app\controllers;
 
+use app\models\City;
+use app\models\CitySearch;
 use app\models\Country;
 use app\models\CountrySearch;
+use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\helpers\ArrayHelper;
 
 /**
  * CountryController implements the CRUD actions for Country model.
@@ -21,12 +25,12 @@ class CountryController extends Controller
         return array_merge(
             parent::behaviors(),
             [
-                'verbs' => [
-                    'class' => VerbFilter::className(),
-                    'actions' => [
-                        'delete' => ['POST'],
-                    ],
-                ],
+                // 'verbs' => [
+                //     'class' => VerbFilter::className(),
+                //     'actions' => [
+                //         'delete' => ['POST'],
+                //     ],
+                // ],
             ]
         );
     }
@@ -38,6 +42,7 @@ class CountryController extends Controller
      */
     public function actionIndex()
     {
+        // Страны
         $searchModel = new CountrySearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
@@ -47,88 +52,26 @@ class CountryController extends Controller
         ]);
     }
 
-    /**
-     * Displays a single Country model.
-     * @param int $id ID
-     * @return string
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    public function actionView($id)
+    public function actionCities($id)
     {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
+        // получение всех городов заданной страны
+        $cities = Country::findOne($id)->getCities()->all();
+        
+        // приведение к однотипному массиву
+        $data = ArrayHelper::toArray($cities, [
+            City::class => [
+                'id',
+                'name'
+            ]
         ]);
-    }
 
-    /**
-     * Creates a new Country model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return string|\yii\web\Response
-     */
-    public function actionCreate()
-    {
-        $model = new Country();
+        // Установка заголовков на json формат
+        \Yii::$app->response->format = \Yii\web\Response::FORMAT_JSON;
 
-        if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
-            }
-        } else {
-            $model->loadDefaultValues();
-        }
-
-        return $this->render('create', [
-            'model' => $model,
+        // Отправление без шаблона
+        // Кодировка строки происходит внутри шаблона
+        return $this->renderPartial('ajaxResponse', [
+            'data' => $data,
         ]);
-    }
-
-    /**
-     * Updates an existing Country model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param int $id ID
-     * @return string|\yii\web\Response
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    public function actionUpdate($id)
-    {
-        $model = $this->findModel($id);
-
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        }
-
-        return $this->render('update', [
-            'model' => $model,
-        ]);
-    }
-
-    /**
-     * Deletes an existing Country model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param int $id ID
-     * @return \yii\web\Response
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    public function actionDelete($id)
-    {
-        $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
-    }
-
-    /**
-     * Finds the Country model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param int $id ID
-     * @return Country the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    protected function findModel($id)
-    {
-        if (($model = Country::findOne(['id' => $id])) !== null) {
-            return $model;
-        }
-
-        throw new NotFoundHttpException('The requested page does not exist.');
     }
 }
