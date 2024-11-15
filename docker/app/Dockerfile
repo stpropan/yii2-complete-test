@@ -68,16 +68,13 @@ RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
 # RUN composer global require laravel/installer
 
 # run migrations
-# RUN cd /app && php artisan migrate
+RUN cd /app && composer install
 
 # for frontend frameworks
 # RUN cd /app && npm install
 
 # permissons rewrite
 RUN chown www-data:www-data -R /app
-
-# RUN composer install && \
-#     npm install
 
 # Add PECL extensions, see
 # https://github.com/docker-library/docs/tree/master/php#pecl-extensions
