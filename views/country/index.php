@@ -15,6 +15,13 @@ use yii\grid\GridView;
 $this->title = 'Страны';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
+<style>
+    @media screen and (max-width: 640px) {        
+        .col-6 {
+            width: 100%;
+        }
+    }
+</style>
 <div class="country-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
@@ -26,7 +33,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-6">
             <?= GridView::widget([
                 'dataProvider' => $dataProvider,
                 // 'filterModel' => $searchModel,
@@ -50,7 +57,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
             ]); ?>
         </div>
-        <div class="d-none col-md-6" id="cities">
+        <div class="d-none col-6" id="cities">
             <table class="table">
                 <thead>
                     <tr>
