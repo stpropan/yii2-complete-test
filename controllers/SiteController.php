@@ -61,7 +61,8 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        // Редирект на основную страницу
+        return $this->redirect('/country/index');
     }
 
     /**
